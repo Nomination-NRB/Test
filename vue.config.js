@@ -7,7 +7,7 @@ function resolve(dir) {
 
 module.exports = defineConfig({
   devServer: {
-    open: true,
+    // open: true,
     // proxy: {
     //   "/api": {
     //     target: "http://127.0.0.1:8000/api", // 要代理的本地api地址，也可以换成线上测试地址

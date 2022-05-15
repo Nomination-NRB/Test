@@ -14,3 +14,11 @@ export function uploadImage(data) {
     data,
   });
 }
+
+export function resize(data) {
+  return request({
+    url: "/resize/",
+    method: "post",
+    data,
+  });
+}

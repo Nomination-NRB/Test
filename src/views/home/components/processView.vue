@@ -14,16 +14,15 @@
               <div class="imageShowView">
                 <!-- 上传图像 -->
                 <el-upload
-                  action="http://0.0.0.0:8080/#/"
+                  action="/ImageSet/"
                   class="avatar-uploader"
                   :http-request="uploadImg"
-                  :show-file-list="false"
                   :on-success="handleImgSuccess"
-                  :before-upload="beforeImgUpload"
+                  :show-file-list="false"
                 >
                   <el-image
-                    v-if="imageUrl"
-                    :src="imageUrl"
+                    v-if="oriImageUrl"
+                    :src="oriImageUrl"
                     fit="contain"
                     class="avatar-uploader"
                   />
@@ -33,7 +32,7 @@
                 </el-upload>
                 <!-- 处理的预览图像 -->
                 <el-image
-                  :src="imageUrl"
+                  :src="modImageUrl"
                   fit="contain"
                   class="avatar-uploader image"
                 >
@@ -84,7 +83,9 @@ export default {
   data() {
     return {
       stepStatusActive: 0,
-      imageUrl: "",
+      oriImageUrl: "",
+      modImageUrl: "",
+      imageID: null,
       centerDialogVisible: false,
       activeIndex: "0",
     };
@@ -106,17 +107,23 @@ export default {
       }
     },
     handleImgSuccess(response, uploadFile) {
-      console.log(response);
-      this.imageUrl = URL.createObjectURL(uploadFile.raw);
+      console.log(response, uploadFile);
+      this.oriImageUrl = URL.createObjectURL(uploadFile);
+      this.modImageUrl = response.data.file;
+      this.imageID = response.data.id;
+      this.$store.commit("image/SET_ID", response.data.id);
+      this.$store.commit("image/SET_URL", response.data.file);
     },
-    async uploadImg(param) {
+    uploadImg(param) {
       console.log("待上传的图像：", param);
       const formData = new FormData();
       formData.append("file", param.file);
-      let rsp = await uploadImage(formData);
-      console.log(rsp);
+      uploadImage(formData).then((res) => {
+        this.handleImgSuccess(res, param.file);
+      });
     },
     beforeImgUpload(rawFile) {
+      console.log("beforeImgUpload", rawFile);
       if (rawFile.type !== "image/jpeg") {
         ElMessage.error("Avatar picture must be JPG format!");
         return false;
