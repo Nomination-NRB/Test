@@ -6,26 +6,71 @@
         <div
           class="stepContent"
           :style="{
-            transform: 'translateX(' + -stepStatusActive * 1150 + 'px)',
+            transform: 'translateX(' + -stepStatusActive * 1200 + 'px)',
           }"
         >
           <div class="viewContent">
-            <el-upload
-              action="http://0.0.0.0:8080/#/"
-              class="avatar-uploader"
-              :http-request="uploadImg"
-              :show-file-list="false"
-              :on-success="handleImgSuccess"
-              :before-upload="beforeImgUpload"
-            >
-              <el-image
-                v-if="imageUrl"
-                :src="imageUrl"
-                fit="contain"
-                style="width: 500px; height: 500px"
-              />
-              <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-            </el-upload>
+            <div class="leftContent">
+              <div class="imageShowView">
+                <!-- 上传图像 -->
+                <el-upload
+                  action="http://0.0.0.0:8080/#/"
+                  class="avatar-uploader"
+                  :http-request="uploadImg"
+                  :show-file-list="false"
+                  :on-success="handleImgSuccess"
+                  :before-upload="beforeImgUpload"
+                >
+                  <el-image
+                    v-if="imageUrl"
+                    :src="imageUrl"
+                    fit="contain"
+                    class="avatar-uploader"
+                  />
+                  <el-icon v-else class="avatar-uploader-icon"
+                    ><Plus
+                  /></el-icon>
+                </el-upload>
+                <!-- 处理的预览图像 -->
+                <el-image
+                  :src="imageUrl"
+                  fit="contain"
+                  class="avatar-uploader image"
+                >
+                </el-image>
+              </div>
+            </div>
+            <div class="rightContent">
+              <!-- 右侧菜单 -->
+              <el-menu
+                :default-active="activeIndex"
+                class="el-menu-demo"
+                mode="horizontal"
+                @select="handleSelect"
+              >
+                <el-menu-item index="0">图像</el-menu-item>
+                <el-menu-item index="1">基本操作</el-menu-item>
+                <el-sub-menu index="2">
+                  <template #title>灰度变换</template>
+                  <el-menu-item index="2-1">item one</el-menu-item>
+                  <el-menu-item index="2-2">item two</el-menu-item>
+                  <el-menu-item index="2-3">item three</el-menu-item>
+                  <el-sub-menu index="2-4">
+                    <template #title>噪声添加</template>
+                    <el-menu-item index="2-4-1">item one</el-menu-item>
+                    <el-menu-item index="2-4-2">item two</el-menu-item>
+                    <el-menu-item index="2-4-3">item three</el-menu-item>
+                  </el-sub-menu>
+                </el-sub-menu>
+                <el-menu-item index="3">复原</el-menu-item>
+                <el-menu-item index="4">空间域操作</el-menu-item>
+                <el-menu-item index="5">频域操作</el-menu-item>
+              </el-menu>
+              <!-- 右侧内容 -->
+              <div class="menu_panel">
+                <panel />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -45,18 +90,31 @@
 </template>
 
 <script>
-import { Plus } from "@element-plus/icons-vue";
+import {
+  Plus,
+  Document,
+  Menu as IconMenu,
+  Location,
+  Setting,
+} from "@element-plus/icons-vue";
 import { ElNotification, UploadProps } from "element-plus";
 import { hello, uploadImage } from "@/api/resolve";
+import panel from "@/views/home/components/panel";
 export default {
   components: {
     Plus,
+    Document,
+    IconMenu,
+    Location,
+    Setting,
+    panel,
   },
   data() {
     return {
       stepStatusActive: 0,
       imageUrl: "",
       centerDialogVisible: false,
+      activeIndex: "0",
     };
   },
   computed: {},
@@ -96,14 +154,40 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.el-menu-demo {
+  width: 100%;
+}
+
+.image {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+}
+.imageShowView {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.rightContent {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.leftContent {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 .avatar-uploader {
-  width: 500px;
-  height: 500px;
+  width: 270px;
+  height: 270px;
 }
 .avatar-uploader .avatar {
-  width: 500px;
-  height: 500px;
+  width: 270px;
+  height: 270px;
   display: block;
 }
 .avatar-uploader .el-upload {
@@ -122,8 +206,8 @@ export default {
 .el-icon.avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 500px;
-  height: 500px;
+  width: 270px;
+  height: 270px;
   text-align: center;
 }
 .container {
@@ -183,7 +267,7 @@ export default {
   background-color: #fff;
   border-radius: 20px;
   box-sizing: border-box;
-  padding: 30px;
+  padding: 10px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -194,16 +278,18 @@ export default {
 .stepView {
   position: relative;
   margin-top: 15px;
-  width: 1150px;
-  height: 550px;
+  width: 1200px;
+  height: 90%;
   background: #fff;
   overflow: hidden;
 }
 .viewContent {
   position: absolute;
-  width: 1150px;
-  height: 550px;
+  width: 1200px;
+  height: 100%;
   transition: 0.5s ease-in-out;
+  display: flex;
+  flex-direction: row;
 }
 .cell-item {
   display: flex;
