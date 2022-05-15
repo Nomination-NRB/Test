@@ -41,35 +41,7 @@
               </div>
             </div>
             <div class="rightContent">
-              <!-- 右侧菜单 -->
-              <el-menu
-                :default-active="activeIndex"
-                class="el-menu-demo"
-                mode="horizontal"
-                @select="handleSelect"
-              >
-                <el-menu-item index="0">图像</el-menu-item>
-                <el-menu-item index="1">基本操作</el-menu-item>
-                <el-sub-menu index="2">
-                  <template #title>灰度变换</template>
-                  <el-menu-item index="2-1">item one</el-menu-item>
-                  <el-menu-item index="2-2">item two</el-menu-item>
-                  <el-menu-item index="2-3">item three</el-menu-item>
-                  <el-sub-menu index="2-4">
-                    <template #title>噪声添加</template>
-                    <el-menu-item index="2-4-1">item one</el-menu-item>
-                    <el-menu-item index="2-4-2">item two</el-menu-item>
-                    <el-menu-item index="2-4-3">item three</el-menu-item>
-                  </el-sub-menu>
-                </el-sub-menu>
-                <el-menu-item index="3">复原</el-menu-item>
-                <el-menu-item index="4">空间域操作</el-menu-item>
-                <el-menu-item index="5">频域操作</el-menu-item>
-              </el-menu>
-              <!-- 右侧内容 -->
-              <div class="menu_panel">
-                <panel />
-              </div>
+              <panel />
             </div>
           </div>
         </div>
@@ -134,6 +106,7 @@ export default {
       }
     },
     handleImgSuccess(response, uploadFile) {
+      console.log(response);
       this.imageUrl = URL.createObjectURL(uploadFile.raw);
     },
     async uploadImg(param) {
