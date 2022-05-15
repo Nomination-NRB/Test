@@ -1,0 +1,271 @@
+<template>
+  <div class="container">
+    <div class="mainView">
+      <!-- <div class="viewTitle">数字图像处理面板</div></div> -->
+      <div class="stepView">
+        <div
+          class="stepContent"
+          :style="{
+            transform: 'translateX(' + -stepStatusActive * 1150 + 'px)',
+          }"
+        >
+          <div class="viewContent">
+            <el-upload
+              action="http://0.0.0.0:8080/#/"
+              class="avatar-uploader"
+              :http-request="uploadImg"
+              :show-file-list="false"
+              :on-success="handleImgSuccess"
+              :before-upload="beforeImgUpload"
+            >
+              <el-image
+                v-if="imageUrl"
+                :src="imageUrl"
+                fit="contain"
+                style="width: 500px; height: 500px"
+              />
+              <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+            </el-upload>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <el-dialog v-model="centerDialogVisible" title="提示" width="30%" center>
+      <span>{{ centerDialogContent }}</span>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="centerDialogVisibleHandler"
+            >确定</el-button
+          >
+        </span>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { Plus } from "@element-plus/icons-vue";
+import { ElNotification, UploadProps } from "element-plus";
+import { hello, uploadImage } from "@/api/resolve";
+export default {
+  components: {
+    Plus,
+  },
+  data() {
+    return {
+      stepStatusActive: 0,
+      imageUrl: "",
+      centerDialogVisible: false,
+    };
+  },
+  computed: {},
+  watch: {},
+  mounted() {
+    this.init();
+  },
+  methods: {
+    async init() {
+      let { data: helloData } = await hello();
+      if (helloData) {
+        ElNotification({
+          title: "你好！",
+          message: helloData,
+          type: "success",
+        });
+      }
+    },
+    handleImgSuccess(response, uploadFile) {
+      this.imageUrl = URL.createObjectURL(uploadFile.raw);
+    },
+    async uploadImg(param) {
+      console.log("待上传的图像：", param);
+      const formData = new FormData();
+      formData.append("file", param.file);
+      let rsp = await uploadImage(formData);
+      console.log(rsp);
+    },
+    beforeImgUpload(rawFile) {
+      if (rawFile.type !== "image/jpeg") {
+        ElMessage.error("Avatar picture must be JPG format!");
+        return false;
+      }
+      return true;
+    },
+  },
+};
+</script>
+
+<style>
+.avatar-uploader {
+  width: 500px;
+  height: 500px;
+}
+.avatar-uploader .avatar {
+  width: 500px;
+  height: 500px;
+  display: block;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 500px;
+  height: 500px;
+  text-align: center;
+}
+.container {
+  min-width: 1280px;
+  position: relative;
+  width: 100%;
+  background-color: #f4f6fc;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+/* 伪元素 */
+.container::after {
+  content: "";
+  position: absolute;
+  height: 2000px;
+  width: 2000px;
+  top: -10%;
+  right: 48%;
+  transform: translateY(-50%);
+  /* background-image: linear-gradient(-45deg, #4481eb 0%, #04befe 100%); */
+  transition: 1.8s ease-in-out;
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: color-change-5x 12s linear infinite alternate both,
+    wave 12s linear infinite alternate both;
+}
+.viewTitle {
+  position: absolute;
+  top: 1%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bolder;
+  font-size: 36px;
+  color: #2d66f6;
+  background-color: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(2px);
+  padding: 5px;
+  border-bottom: 2px solid #2d66f6;
+}
+.viewPic {
+  z-index: 20;
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  bottom: 0;
+  left: 20px;
+}
+.mainView {
+  opacity: 0.99;
+  z-index: 10;
+  height: 720px;
+  width: 1240px;
+  background-color: #fff;
+  border-radius: 20px;
+  box-sizing: border-box;
+  padding: 30px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepView {
+  position: relative;
+  margin-top: 15px;
+  width: 1150px;
+  height: 550px;
+  background: #fff;
+  overflow: hidden;
+}
+.viewContent {
+  position: absolute;
+  width: 1150px;
+  height: 550px;
+  transition: 0.5s ease-in-out;
+}
+.cell-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: auto;
+}
+.doneView {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.doneViewLeft {
+  width: 40%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.doneViewRight {
+  width: 60%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.title {
+  font-size: 28px;
+  color: #2d66f6;
+  font-weight: bold;
+  padding: 5px;
+}
+.tipsContent {
+  font-size: 18px;
+  padding: 5px;
+  font-weight: bold;
+}
+.el-table .warning-row {
+  --el-table-tr-bg-color: var(--el-color-warning-light-9);
+}
+
+@keyframes color-change-5x {
+  0% {
+    background: #2d67f6;
+  }
+  50% {
+    background: #4481eb;
+  }
+  100% {
+    background: #04befe;
+  }
+}
+@keyframes wave {
+  0% {
+    transform: translateY(-50%);
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateY(-20%);
+    transform: translateX(20%);
+  }
+}
+</style>
