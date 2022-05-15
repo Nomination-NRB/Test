@@ -10,9 +10,9 @@
             <span class="demonstration">X轴变化率(%)</span>
             <el-slider
               v-model="zoomXValue"
-              :step="1"
-              :min="-100"
-              :max="100"
+              :step="0.1"
+              :min="0.1"
+              :max="10"
               show-stops
               show-input
             />
@@ -21,9 +21,9 @@
             <span class="demonstration">Y轴变化率(%)</span>
             <el-slider
               v-model="zoomYValue"
-              :step="1"
-              :min="-100"
-              :max="100"
+              :step="0.1"
+              :min="0.1"
+              :max="10"
               show-stops
               show-input
             />
@@ -139,8 +139,8 @@ export default {
   data() {
     return {
       activeName: "basic",
-      zoomXValue: 0,
-      zoomYValue: 0,
+      zoomXValue: 1,
+      zoomYValue: 1,
       rotateValue: 0,
       spinVaue: "X",
       transXValue: 0,
