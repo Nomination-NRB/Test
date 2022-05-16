@@ -12,35 +12,57 @@
           <div class="viewContent">
             <div class="leftContent">
               <div class="imageShowView">
-                <!-- 上传图像 -->
-                <el-upload
-                  action="/ImageSet/"
-                  class="avatar-uploader"
-                  :http-request="uploadImg"
-                  :on-success="handleImgSuccess"
-                  :show-file-list="false"
+                <el-popover
+                  placement="bottom"
+                  title="图像"
+                  :width="200"
+                  trigger="hover"
+                  content="原始图像,点击上传"
                 >
-                  <el-image
-                    v-if="oriImageUrl"
-                    :src="oriImageUrl"
-                    fit="contain"
-                    class="avatar-uploader"
-                  />
-                  <el-icon v-else class="avatar-uploader-icon"
-                    ><Plus
-                  /></el-icon>
-                </el-upload>
-                <!-- 处理的预览图像 -->
-                <el-image
-                  :src="modImageUrl"
-                  fit="contain"
-                  class="avatar-uploader image"
+                  <template #reference>
+                    <!-- 上传图像 -->
+                    <el-upload
+                      action="/ImageSet/"
+                      class="avatar-uploader"
+                      :http-request="uploadImg"
+                      :on-success="handleImgSuccess"
+                      :show-file-list="false"
+                    >
+                      <el-image
+                        v-if="oriImageUrl"
+                        :src="oriImageUrl"
+                        fit="contain"
+                        class="avatar-uploader"
+                      />
+                      <el-icon v-else class="avatar-uploader-icon"
+                        ><Plus
+                      /></el-icon>
+                    </el-upload>
+                  </template>
+                </el-popover>
+                <el-popover
+                  placement="bottom"
+                  title="图像"
+                  :width="200"
+                  trigger="hover"
+                  content="处理后的图像，点击查看大图"
                 >
-                </el-image>
+                  <template #reference>
+                    <!-- 处理的预览图像 -->
+                    <el-image
+                      @click="openImageHandler"
+                      :src="modImageUrl"
+                      fit="contain"
+                      class="avatar-uploader image"
+                    >
+                    </el-image>
+                  </template>
+                </el-popover>
               </div>
             </div>
             <div class="rightContent">
-              <panel />
+              <panel v-if="imageID" />
+              <el-skeleton v-else :rows="16" animated />
             </div>
           </div>
         </div>
@@ -53,6 +75,20 @@
         <span class="dialog-footer">
           <el-button type="primary" @click="centerDialogVisibleHandler"
             >确定</el-button
+          >
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog v-model="imageDialogVisible" title="图像" fullscreen>
+      <el-image
+        :src="modImageUrl"
+        fit="contain"
+        style="width: 100%; height: 100%"
+      />
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="imageDialogVisible = false"
+            >关闭</el-button
           >
         </span>
       </template>
@@ -88,6 +124,7 @@ export default {
       imageID: null,
       centerDialogVisible: false,
       activeIndex: "0",
+      imageDialogVisible: false,
     };
   },
   computed: {},
@@ -113,6 +150,11 @@ export default {
       this.imageID = response.data.id;
       this.$store.commit("image/SET_ID", response.data.id);
       this.$store.commit("image/SET_URL", response.data.file);
+      ElNotification({
+        title: "上传成功",
+        message: "图像上传成功,可以开始图像处理",
+        type: "success",
+      });
     },
     uploadImg(param) {
       console.log("待上传的图像：", param);
@@ -129,6 +171,9 @@ export default {
         return false;
       }
       return true;
+    },
+    openImageHandler() {
+      this.imageDialogVisible = true;
     },
   },
 };

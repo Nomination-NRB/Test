@@ -126,9 +126,8 @@
           </div>
         </el-scrollbar>
       </el-tab-pane>
-      <el-tab-pane label="灰度变换" name="change" class="el-tabs__content"
-        >Role</el-tab-pane
-      >
+      <el-tab-pane label="灰度变换" name="change" class="el-tabs__content">
+      </el-tab-pane>
       <el-tab-pane label="噪声添加" name="noise" class="el-tabs__content"
         >Task</el-tab-pane
       >
@@ -166,6 +165,11 @@ export default {
   },
   methods: {
     async resizeHandler() {
+      loading = ElLoading.service({
+        lock: true,
+        text: "处理中...",
+        background: "rgba(255, 255, 255, 0.2)",
+      });
       let _id = this.$store.getters.id;
       let res = await API.resize({
         zoomXValue: this.zoomXValue,
@@ -175,6 +179,7 @@ export default {
       console.log(res);
       this.$store.commit("image/SET_URL", res.data.file);
       this.$forceUpdate();
+      loading.close();
       ElNotification({
         title: "操作成功",
         message: "已缩小/放大图片",

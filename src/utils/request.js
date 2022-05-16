@@ -7,6 +7,8 @@ const service = axios.create({
   timeout: 5000, // 默认超时时间
 });
 
+let loading = null;
+
 // 添加请求拦截器
 service.interceptors.request.use(
   (config) => {
@@ -32,7 +34,6 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     // 2xx 范围内的状态码都会触发该函数。
-
     if (response.headers["content-type"] === "application/octet-stream")
       return response;
 
