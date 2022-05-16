@@ -138,7 +138,7 @@ export default {
       if (helloData) {
         ElNotification({
           title: "你好！",
-          message: helloData,
+          message: helloData + "请先上传图片，随后操作面板将打开",
           type: "success",
         });
       }
