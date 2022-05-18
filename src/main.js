@@ -23,4 +23,10 @@ app.use(store);
 //全局css
 import "@/styles/index.css";
 
+//echarts 封装 https://juejin.cn/post/6995518429952212999#heading-5
+import eChartFn from "@/components/chart/index.js";
+import ChartPanel from "@/components/chart/index.vue";
+app.component(ChartPanel.name, ChartPanel);
+app.config.globalProperties.$eChartFn = eChartFn; //vue3原型链设置
+
 app.mount("#app");

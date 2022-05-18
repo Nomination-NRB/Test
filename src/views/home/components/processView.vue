@@ -59,6 +59,14 @@
                   </template>
                 </el-popover>
               </div>
+              <div class="zhifang">
+                <chartView
+                  style="margin-top: 8px; width: 580px; height: 340px"
+                  :chart-option="chartOpt"
+                  :auto-resize="true"
+                  height="100%"
+                />
+              </div>
             </div>
             <div class="rightContent">
               <panel v-if="imageID" />
@@ -107,6 +115,9 @@ import {
 import { ElNotification, UploadProps } from "element-plus";
 import { hello, uploadImage } from "@/api/resolve";
 import panel from "@/views/home/components/panel";
+
+import { chartView } from "@/components/chart";
+
 export default {
   components: {
     Plus,
@@ -116,8 +127,12 @@ export default {
     Setting,
     panel,
   },
+  created() {
+    this.chartOpt = this.$eChartFn.testBar();
+  },
   data() {
     return {
+      chartOpt: {},
       stepStatusActive: 0,
       oriImageUrl: "",
       modImageUrl: "",
