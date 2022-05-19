@@ -69,7 +69,7 @@
               </div>
             </div>
             <div class="rightContent">
-              <panel v-if="imageID" />
+              <panel v-if="imageID" @refresh="refreshHandle" />
               <el-skeleton v-else :rows="16" animated />
             </div>
           </div>
@@ -157,6 +157,13 @@ export default {
           type: "success",
         });
       }
+    },
+    async refreshHandle() {
+      let { data: histData } = await API.getHistArray({
+        id: this.imageID,
+      });
+      console.log("完成后获取的直方图：", histData);
+      this.chartOpt = this.$eChartFn.testBar(histData);
     },
     async handleImgSuccess(response, uploadFile) {
       let loading = ElLoading.service({
