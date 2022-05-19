@@ -23,9 +23,19 @@ export function getHistArray(data) {
   });
 }
 
+// 缩小放大
 export function resize(data) {
   return request({
     url: "/resize/",
+    method: "post",
+    data,
+  });
+}
+
+// 缩小放大
+export function rotate(data) {
+  return request({
+    url: "/rotate/",
     method: "post",
     data,
   });

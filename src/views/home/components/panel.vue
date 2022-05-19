@@ -117,6 +117,7 @@
               />
             </div>
             <el-button
+              @click="translateHandler"
               type="primary"
               style="margin-top: 6px; margin-left: 4px; align-items: center"
             >
@@ -681,7 +682,52 @@ export default {
     };
   },
   methods: {
-    async rotateHandler() {},
+    async translateHandler() {
+      let loading = ElLoading.service({
+        lock: true,
+        text: "处理中...",
+        background: "rgba(255, 255, 255, 0.2)",
+      });
+      let _id = this.$store.getters.id;
+      //以上为必备操作
+
+      //以下为必备操作
+      this.$store.commit("image/SET_URL", res.data.file);
+      this.$forceUpdate();
+      this.$emit("refresh");
+      loading.close();
+      ElNotification({
+        title: "操作成功",
+        message: "已缩小/放大图片",
+        type: "success",
+      });
+    },
+    async rotateHandler() {
+      let loading = ElLoading.service({
+        lock: true,
+        text: "处理中...",
+        background: "rgba(255, 255, 255, 0.2)",
+      });
+      let _id = this.$store.getters.id;
+      //以上为必备操作
+
+      //针对不同操作调用不同API即可
+      let res = await API.rotate({
+        rotateValue: this.rotateValue,
+        id: _id,
+      });
+
+      //以下为必备操作
+      this.$store.commit("image/SET_URL", res.data.file);
+      this.$forceUpdate();
+      this.$emit("refresh");
+      loading.close();
+      ElNotification({
+        title: "操作成功",
+        message: "已缩小/放大图片",
+        type: "success",
+      });
+    },
     async resizeHandler() {
       let loading = ElLoading.service({
         lock: true,
