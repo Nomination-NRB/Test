@@ -112,8 +112,8 @@ import {
   Location,
   Setting,
 } from "@element-plus/icons-vue";
-import { ElNotification, UploadProps } from "element-plus";
-import { hello, uploadImage } from "@/api/resolve";
+import { ElNotification, UploadProps, ElLoading } from "element-plus";
+import * as API from "@/api/resolve";
 import panel from "@/views/home/components/panel";
 
 import { chartView } from "@/components/chart";
@@ -128,7 +128,7 @@ export default {
     panel,
   },
   created() {
-    this.chartOpt = this.$eChartFn.testBar();
+    this.chartOpt = this.$eChartFn.testBar({ r: [], g: [], b: [], gray: [] });
   },
   data() {
     return {
@@ -149,7 +149,7 @@ export default {
   },
   methods: {
     async init() {
-      let { data: helloData } = await hello();
+      let { data: helloData } = await API.hello();
       if (helloData) {
         ElNotification({
           title: "你好！",
@@ -158,13 +158,25 @@ export default {
         });
       }
     },
-    handleImgSuccess(response, uploadFile) {
+    async handleImgSuccess(response, uploadFile) {
+      let loading = ElLoading.service({
+        lock: true,
+        text: "处理中...",
+        background: "rgba(255, 255, 255, 0.2)",
+      });
       console.log(response, uploadFile);
       this.oriImageUrl = URL.createObjectURL(uploadFile);
       this.modImageUrl = response.data.file;
       this.imageID = response.data.id;
       this.$store.commit("image/SET_ID", response.data.id);
       this.$store.commit("image/SET_URL", response.data.file);
+
+      let { data: histData } = await API.getHistArray({
+        id: this.imageID,
+      });
+      console.log("上传图片后首次获取的直方图：", histData);
+      this.chartOpt = this.$eChartFn.testBar(histData);
+      loading.close();
       ElNotification({
         title: "上传成功",
         message: "图像上传成功,可以开始图像处理",
@@ -175,7 +187,7 @@ export default {
       console.log("待上传的图像：", param);
       const formData = new FormData();
       formData.append("file", param.file);
-      uploadImage(formData).then((res) => {
+      API.uploadImage(formData).then((res) => {
         this.handleImgSuccess(res, param.file);
       });
     },

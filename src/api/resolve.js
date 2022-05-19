@@ -15,6 +15,14 @@ export function uploadImage(data) {
   });
 }
 
+export function getHistArray(data) {
+  return request({
+    url: "/getHistArray/",
+    method: "post",
+    data,
+  });
+}
+
 export function resize(data) {
   return request({
     url: "/resize/",
