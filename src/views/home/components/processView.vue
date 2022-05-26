@@ -69,7 +69,7 @@
               </div>
             </div>
             <div class="rightContent">
-              <panel v-if="imageID" @refresh="refreshHandle" />
+              <panel v-if="!imageID" @refresh="refreshHandle" />
               <el-skeleton v-else :rows="16" animated />
             </div>
           </div>
